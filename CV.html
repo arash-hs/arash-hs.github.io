@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arash Hosseiny — Network Security Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060810;
+  --s1:#0c0f1a;
+  --s2:#111624;
+  --s3:#161d30;
+  --border:#1e2840;
+  --border2:#263354;
+  --teal:#00e5b0;
+  --teal2:#00b88a;
+  --blue:#4d9fff;
+  --purple:#a78bfa;
+  --text:#dde4f0;
+  --muted:#7a8aaa;
+  --dim:#3a4560;
+  --grotesk:'Space Grotesk',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--grotesk);font-size:15px;line-height:1.7;overflow-x:hidden}
+
+/* ── GRID NOISE BG ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  opacity:0.25;pointer-events:none;z-index:0;
+}
+
+/* ── GLOW ORBS ── */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:0.12}
+.orb1{width:600px;height:600px;top:-200px;left:-200px;background:var(--teal)}
+.orb2{width:500px;height:500px;bottom:-150px;right:-150px;background:var(--blue)}
+.orb3{width:300px;height:300px;top:40%;left:40%;background:var(--purple)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:280px;
+  background:var(--s1);
+  border-right:1px solid var(--border);
+  z-index:10;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;bottom:-100px;left:-100px;
+  width:350px;height:350px;
+  background:radial-gradient(circle,rgba(0,229,176,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.profile-area{padding:40px 28px 32px}
+
+.avatar{
+  width:72px;height:72px;border-radius:16px;
+  background:linear-gradient(135deg,var(--teal2),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:22px;font-weight:700;
+  color:#fff;letter-spacing:-1px;
+  margin-bottom:20px;
+  position:relative;
+}
+.avatar::after{
+  content:'';position:absolute;inset:-2px;
+  border-radius:18px;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  z-index:-1;opacity:0.5;
+}
+
+.profile-name{font-size:20px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:4px}
+.profile-role{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+  color:var(--teal);text-transform:uppercase;margin-bottom:20px;
+}
+
+.status-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,229,176,0.08);border:1px solid rgba(0,229,176,0.2);
+  border-radius:20px;padding:5px 12px;
+  font-size:11px;color:var(--teal);font-family:var(--mono);
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+/* sidebar nav */
+.sidebar-nav{padding:0 16px;flex:1}
+.nav-group{margin-bottom:28px}
+.nav-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--dim);padding:0 12px;margin-bottom:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 12px;border-radius:8px;
+  font-size:13px;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;
+  text-decoration:none;
+}
+.nav-item:hover,.nav-item.active{background:var(--s3);color:var(--text)}
+.nav-item.active{color:var(--teal)}
+.nav-icon{width:16px;height:16px;opacity:0.6;flex-shrink:0}
+.nav-item.active .nav-icon{opacity:1}
+
+/* contact in sidebar */
+.sidebar-contact{padding:20px 28px;border-top:1px solid var(--border)}
+.contact-row{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  margin-bottom:8px;
+}
+.contact-row:last-child{margin-bottom:0}
+.contact-row a{color:var(--muted);text-decoration:none;transition:color 0.2s}
+.contact-row a:hover{color:var(--teal)}
+.contact-ico{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--s3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+
+/* ── MAIN CONTENT ── */
+.main{margin-left:280px;position:relative;z-index:1;min-height:100vh}
+
+/* ── HERO ── */
+.hero{
+  padding:60px 60px 56px;
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--teal)}
+
+.hero-heading{
+  font-size:clamp(40px,5vw,62px);font-weight:700;
+  line-height:1.05;letter-spacing:-0.03em;color:#fff;
+  margin-bottom:20px;
+}
+.hero-heading em{
+  font-style:normal;
+  background:linear-gradient(90deg,var(--teal),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.hero-sub{
+  font-size:16px;color:var(--muted);max-width:560px;line-height:1.7;
+  margin-bottom:36px;
+}
+
+/* tag cloud */
+.tag-cloud{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  font-family:var(--mono);font-size:11px;
+  padding:5px 12px;border-radius:4px;
+  border:1px solid var(--border2);
+  color:var(--muted);background:var(--s2);
+  transition:all 0.2s;cursor:default;
+}
+.tag:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,229,176,0.06)}
+.tag.primary{border-color:rgba(0,229,176,0.3);color:var(--teal);background:rgba(0,229,176,0.07)}
+.tag.blue{border-color:rgba(77,159,255,0.3);color:var(--blue);background:rgba(77,159,255,0.07)}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--border);
+}
+.stat{
+  padding:28px 36px;border-right:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.stat:last-child{border-right:none}
+.stat::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.4s;
+}
+.stat:hover::before{transform:scaleX(1)}
+.stat-num{
+  font-family:var(--mono);font-size:32px;font-weight:700;
+  color:#fff;line-height:1;margin-bottom:6px;
+}
+.stat-num span{color:var(--teal);font-size:20px}
+.stat-label{font-size:12px;color:var(--muted)}
+
+/* ── CONTENT SECTIONS ── */
+.sections{padding:0}
+
+.section{
+  padding:52px 60px;
+  border-bottom:1px solid var(--border);
+}
+.section:last-child{border-bottom:none}
+
+.sec-header{
+  display:flex;align-items:center;gap:16px;margin-bottom:36px;
+}
+.sec-num{
+  font-family:var(--mono);font-size:11px;color:var(--dim);
+  width:28px;flex-shrink:0;
+}
+.sec-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:0.05em;text-transform:uppercase}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+/* ── EXPERIENCE TIMELINE ── */
+.timeline{position:relative}
+.timeline::before{
+  content:'';position:absolute;left:0;top:8px;bottom:0;
+  width:1px;background:linear-gradient(180deg,var(--teal),var(--border),transparent);
+}
+
+.tl-item{
+  padding-left:32px;margin-bottom:44px;position:relative;
+}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-5px;top:8px;
+  width:11px;height:11px;border-radius:50%;
+  border:2px solid var(--teal);background:var(--bg);
+}
+.tl-item:first-child .tl-dot{background:var(--teal)}
+
+.tl-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;margin-bottom:4px;
+}
+.tl-company{font-size:17px;font-weight:600;color:#fff}
+.tl-period{
+  font-family:var(--mono);font-size:11px;color:var(--dim);
+  white-space:nowrap;padding-top:3px;
+}
+.tl-role{
+  font-family:var(--mono);font-size:11px;color:var(--teal);
+  letter-spacing:0.05em;text-transform:uppercase;margin-bottom:16px;
+}
+
+/* module cards inside timeline */
+.module-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.mod{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:14px 16px;
+  transition:border-color 0.2s;
+}
+.mod:hover{border-color:var(--border2)}
+.mod-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--blue);margin-bottom:8px;
+}
+.mod-list{list-style:none}
+.mod-list li{
+  font-size:12.5px;color:var(--muted);padding:2px 0 2px 12px;
+  position:relative;line-height:1.55;
+}
+.mod-list li::before{
+  content:'›';position:absolute;left:0;color:var(--dim);
+}
+
+/* plain list variant */
+.plain-list{list-style:none;margin-top:12px}
+.plain-list li{
+  font-size:13.5px;color:var(--muted);
+  padding:5px 0 5px 18px;position:relative;
+  border-bottom:1px solid rgba(30,40,64,0.5);
+  line-height:1.6;
+}
+.plain-list li:last-child{border-bottom:none}
+.plain-list li::before{content:'›';position:absolute;left:0;color:var(--teal);font-size:16px;line-height:1.4}
+
+/* ── SKILLS GRID ── */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.skill-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+  transition:all 0.25s;
+}
+.skill-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.skill-card-title{
+  font-size:12px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.skill-card-title::before{
+  content:'';width:8px;height:8px;border-radius:2px;flex-shrink:0;
+}
+.skill-card.teal .skill-card-title::before{background:var(--teal)}
+.skill-card.blue .skill-card-title::before{background:var(--blue)}
+.skill-card.purple .skill-card-title::before{background:var(--purple)}
+
+.skill-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--border);
+  gap:8px;
+}
+.skill-item:last-child{border-bottom:none}
+.skill-name{font-size:13px;color:var(--text)}
+.skill-bar-wrap{display:flex;align-items:center;gap:8px}
+.skill-dots{display:flex;gap:3px}
+.dot-f{width:6px;height:6px;border-radius:2px;background:var(--teal)}
+.dot-p{width:6px;height:6px;border-radius:2px;background:var(--blue)}
+.dot-e{width:6px;height:6px;border-radius:2px;background:var(--border2)}
+.skill-lbl{font-family:var(--mono);font-size:9px;color:var(--dim);white-space:nowrap}
+
+/* ── CERTS ── */
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cert-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.cert-card:hover{border-color:var(--border2)}
+.cert-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),var(--blue));
+}
+.cert-year{font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:6px}
+.cert-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
+.cert-issuer{font-size:11px;color:var(--muted)}
+
+/* ── EDU + LANG ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+
+.edu-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:24px;
+}
+.edu-year{
+  font-family:var(--mono);font-size:10px;color:var(--teal);
+  margin-bottom:8px;letter-spacing:0.1em;
+}
+.edu-degree{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px}
+.edu-school{font-size:13px;color:var(--muted)}
+
+.lang-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.lang-item:last-child{border-bottom:none}
+.lang-name{font-size:14px;color:var(--text);font-weight:500}
+.lang-meter{display:flex;gap:4px;align-items:center}
+.lang-pip{width:10px;height:10px;border-radius:2px}
+.pip-fill{background:var(--teal)}
+.pip-empty{background:var(--border2)}
+.lang-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:8px}
+
+/* ── FOOTER ── */
+.footer{
+  margin-left:280px;
+  padding:24px 60px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;z-index:1;
+}
+.footer-left{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.footer-right{
+  font-family:var(--mono);font-size:11px;color:var(--dim);
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main,.footer{margin-left:0}
+  .hero,.section{padding:40px 24px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .module-grid,.skills-grid,.cert-grid{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+}
+
+/* ── ENTRY ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp 0.6s ease both}
+.stats-row{animation:fadeUp 0.6s 0.1s ease both}
+.section{animation:fadeUp 0.6s 0.2s ease both}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="profile-area">
+    <div class="avatar">AH</div>
+    <div class="profile-name">Arash Hosseiny</div>
+    <div class="profile-role">// Sr. Network Security Eng.</div>
+    <div class="status-pill"><span class="status-dot"></span>Open to opportunities</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Navigate</div>
+      <a href="#experience" class="nav-item active">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/></svg>
+        Experience
+      </a>
+      <a href="#skills" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        Skills
+      </a>
+      <a href="#certs" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Certifications
+      </a>
+      <a href="#edu" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+        Education
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar-contact">
+    <div class="contact-row">
+      <div class="contact-ico">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      </div>
+      <span>+98 919 507 8593</span>
+    </div>
+    <div class="contact-row">
+      <div class="contact-ico">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      <a href="mailto:Arash_it@rocketmail.com">Arash_it@rocketmail.com</a>
+    </div>
+    <div class="contact-row">
+      <div class="contact-ico">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+      </div>
+      <a href="https://arash-hs.github.io" target="_blank">arash-hs.github.io</a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Senior Network Security Engineer</div>
+    <h1 class="hero-heading">Securing <em>Networks</em><br>at Scale</h1>
+    <p class="hero-sub">10+ years hardening enterprise infrastructure across payment systems, banking, and financial services. Specializing in F5 BIG-IP, FortiGate, and multi-vendor security architectures.</p>
+    <div class="tag-cloud">
+      <span class="tag primary">F5 BIG-IP</span>
+      <span class="tag primary">WAF / ASM</span>
+      <span class="tag primary">AFM</span>
+      <span class="tag primary">FortiGate</span>
+      <span class="tag blue">Cisco ASA</span>
+      <span class="tag blue">Firepower FTD</span>
+      <span class="tag blue">Juniper SRX</span>
+      <span class="tag">BGP / OSPF</span>
+      <span class="tag">DMVPN</span>
+      <span class="tag">IPsec / GRE</span>
+      <span class="tag">Micro-Segmentation</span>
+      <span class="tag">DDoS Mitigation</span>
+      <span class="tag">Splunk</span>
+      <span class="tag">Python / Netmiko</span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">10<span>+</span></div>
+      <div class="stat-label">Years of Experience</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Companies Secured</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5<span>+</span></div>
+      <div class="stat-label">Certifications Held</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15<span>+</span></div>
+      <div class="stat-label">Technologies Mastered</div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <section class="section" id="experience">
+    <div class="sec-header">
+      <span class="sec-num">01</span>
+      <span class="sec-title">Work Experience</span>
+      <span class="sec-line"></span>
+    </div>
+
+    <div class="timeline">
+
+      <!-- JOB 1 -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-head">
+          <span class="tl-company">Pardakht Electronic Sadad</span>
+          <span class="tl-period">Aug 2024 — Present</span>
+        </div>
+        <div class="tl-role">Senior Network Security Engineer · Tehran, Iran</div>
+        <div class="module-grid">
+          <div class="mod">
+            <div class="mod-title">F5 BIG-IP · LTM</div>
+            <ul class="mod-list">
+              <li>Virtual Servers, Pools, Nodes & Monitors for HA load balancing</li>
+              <li>Traffic analysis via TCPDUMP & BIG-IP Analytics</li>
+              <li>Advanced HTTP content routing & SSL/TLS offloading</li>
+            </ul>
+          </div>
+          <div class="mod">
+            <div class="mod-title">F5 BIG-IP · ASM (WAF)</div>
+            <ul class="mod-list">
+              <li>WAF deployment against OWASP Top 10 (SQLi, XSS)</li>
+              <li>Fine-tuned security policies to minimize false positives</li>
+              <li>Continuous threat monitoring & mitigation</li>
+            </ul>
+          </div>
+          <div class="mod">
+            <div class="mod-title">F5 BIG-IP · AFM</div>
+            <ul class="mod-list">
+              <li>Advanced firewall policies for network edge filtering</li>
+              <li>DDoS mitigation: volumetric & application-layer</li>
+              <li>Periodic rule audits & security posture optimization</li>
+            </ul>
+          </div>
+          <div class="mod">
+            <div class="mod-title">FortiGate · Segmentation</div>
+            <ul class="mod-list">
+              <li>Transparent Mode deployment with zero IP impact</li>
+              <li>Micro-segmentation with VLAN & ACL isolation</li>
+              <li>FortiAnalyzer: centralized log collection & analysis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOB 2 -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-head">
+          <span class="tl-company">Noor Bank</span>
+          <span class="tl-period">Jan 2018 — Aug 2024</span>
+        </div>
+        <div class="tl-role">Network Engineer · Tehran, Iran</div>
+        <ul class="plain-list">
+          <li>Zone-Based Firewall (ZBF) & AAA service configuration and maintenance</li>
+          <li>Managed Cisco ASA (5525-x, 5545-x, 5510) and Firepower FTD on 5500-x</li>
+          <li>FortiGate (400F, 800 series) and Juniper SRX (1400, 650, 550) administration</li>
+          <li>Site-to-site & remote access VPN; GRE over IPsec troubleshooting (IKEv1/IKEv2)</li>
+          <li>BGP peering with two ISPs, community negotiation, and route-reflector design</li>
+          <li>HSRP on core routers for branch resiliency; DMVPN Phase 1 deployment</li>
+          <li>Cisco IOS hardening per best practice; VSS, Stacking, and HA configuration</li>
+          <li>Traffic & incident analysis with Splunk; Python automation with Netmiko/Paramiko</li>
+        </ul>
+      </div>
+
+      <!-- JOB 3 -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-head">
+          <span class="tl-company">Niksport / Rosha Center</span>
+          <span class="tl-period">Jan 2016 — Apr 2018</span>
+        </div>
+        <div class="tl-role">Network Engineer · Tehran, Iran</div>
+        <ul class="plain-list">
+          <li>Multi-branch network infrastructure for major sports retail group across Iran</li>
+          <li>Connectivity and security management for Nike, Salomon, Asics, Wilson branches</li>
+        </ul>
+      </div>
+
+      <!-- JOB 4 -->
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-head">
+          <span class="tl-company">Pajbehfar</span>
+          <span class="tl-period">Jan 2013 — Sep 2015</span>
+        </div>
+        <div class="tl-role">Network Administrator · Tehran, Iran</div>
+        <ul class="plain-list">
+          <li>Core network infrastructure administration and service management</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section" id="skills">
+    <div class="sec-header">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Technical Skills</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="skills-grid">
+
+      <div class="skill-card teal">
+        <div class="skill-card-title">Security & Firewall</div>
+        <div class="skill-item">
+          <span class="skill-name">F5 BIG-IP (ASM/AFM/LTM)</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">FortiGate</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Fortiweb</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Cisco ASA / FTD</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Firepower FMC</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Juniper SRX</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-p"></span><span class="dot-p"></span><span class="dot-p"></span><span class="dot-e"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Intermediate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="skill-card blue">
+        <div class="skill-card-title">Networking</div>
+        <div class="skill-item">
+          <span class="skill-name">Cisco CCNA</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Expert</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">CCNP Route & Switch</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Expert</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">BGP / OSPF / DMVPN</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">IPsec / GRE / VPN</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">MikroTik (MTCNA)</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">MCSE / MCITP</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Expert</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="skill-card purple">
+        <div class="skill-card-title">Monitoring & Automation</div>
+        <div class="skill-item">
+          <span class="skill-name">PRTG</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Expert</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">SolarWinds</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span></div>
+            <span class="skill-lbl">Expert</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Splunk Enterprise</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-p"></span><span class="dot-p"></span><span class="dot-p"></span><span class="dot-e"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Intermediate</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Python / Netmiko</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-p"></span><span class="dot-p"></span><span class="dot-p"></span><span class="dot-e"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Intermediate</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Linux Server</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-p"></span><span class="dot-p"></span><span class="dot-p"></span><span class="dot-e"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Intermediate</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">FortiAnalyzer</span>
+          <div class="skill-bar-wrap">
+            <div class="skill-dots"><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-f"></span><span class="dot-e"></span></div>
+            <span class="skill-lbl">Advanced</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CERTS -->
+  <section class="section" id="certs">
+    <div class="sec-header">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Certifications</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-year">2018 · Cando</div>
+        <div class="cert-name">CCNP Route & Switch</div>
+        <div class="cert-issuer">Cisco Networking Academy</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-year">2013 · Cando</div>
+        <div class="cert-name">CCNA</div>
+        <div class="cert-issuer">Cisco Networking Academy</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-year">2013 · Kahkeshan Nor</div>
+        <div class="cert-name">MCSE</div>
+        <div class="cert-issuer">Microsoft Certified Solutions Expert</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-year">2012 · Kahkeshan Nor</div>
+        <div class="cert-name">Network+</div>
+        <div class="cert-issuer">CompTIA</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-year">2014 · Noranet</div>
+        <div class="cert-name">MikroTik MTCNA</div>
+        <div class="cert-issuer">MikroTik Academy</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-year">Active</div>
+        <div class="cert-name">CCNA Security</div>
+        <div class="cert-issuer">Cisco Networking Academy</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDU + LANG -->
+  <section class="section" id="edu">
+    <div class="sec-header">
+      <span class="sec-num">04</span>
+      <span class="sec-title">Education & Languages</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="edu-card">
+          <div class="edu-year">2011 — 2014</div>
+          <div class="edu-degree">B.Sc. Computer Engineering</div>
+          <div class="edu-school">Hardware & Software · Karaj, Alborz, Iran</div>
+        </div>
+      </div>
+      <div>
+        <div class="lang-item">
+          <span class="lang-name">Persian (Farsi)</span>
+          <div class="lang-meter">
+            <div class="lang-pip pip-fill"></div><div class="lang-pip pip-fill"></div>
+            <div class="lang-pip pip-fill"></div><div class="lang-pip pip-fill"></div>
+            <div class="lang-pip pip-fill"></div>
+            <span class="lang-lbl">Native</span>
+          </div>
+        </div>
+        <div class="lang-item">
+          <span class="lang-name">English</span>
+          <div class="lang-meter">
+            <div class="lang-pip pip-fill"></div><div class="lang-pip pip-fill"></div>
+            <div class="lang-pip pip-fill"></div><div class="lang-pip pip-fill"></div>
+            <div class="lang-pip pip-empty"></div>
+            <span class="lang-lbl">Upper Intermediate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-left">arash-hs.github.io · Tehran, Iran</span>
+  <span class="footer-right">
+    <span style="color:var(--teal)">●</span> Available for senior security roles
+  </span>
+</footer>
+
+<script>
+const items = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
+  items.forEach(i=>{
+    i.classList.remove('active');
+    if(i.getAttribute('href')==='#'+cur)i.classList.add('active');
+  });
+});
+items.forEach(i=>i.addEventListener('click',()=>{items.forEach(x=>x.classList.remove('active'));i.classList.add('active')}));
+</script>
+</body>
+</html>
